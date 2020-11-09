@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import Grid from '@material-ui/core/Grid';
+import Container from '@material-ui/core/Container'
 
 // components
 import Joke from './components/Joke';
@@ -36,19 +38,22 @@ function App() {
     return <div>Loading...</div>
   } else {
     return (
-      <>
-        {
-          data?.value.map((item, index) => (
-            <Joke
-              key={index}
-              joke={item.joke}
-            />
-          ))
-        }
-      </>
+      <Container>
+        <Grid container direction="row" justify="center" alignItems="center" spacing={2}>
+          {
+            data?.value.map((item, index) => (
+              <Grid item xs={6}>
+                <Joke
+                  key={index}
+                  joke={item.joke}
+                />
+              </Grid>
+            ))
+          }
+        </Grid>
+      </Container>
     )
   }
-
 }
 
 export default App;
