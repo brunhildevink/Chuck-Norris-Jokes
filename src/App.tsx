@@ -4,6 +4,7 @@ import Container from '@material-ui/core/Container'
 
 // components
 import Joke from './components/Joke';
+import Favorite from './components/Favorite';
 
 // models
 import { JokeModel } from './models/JokeModel';
@@ -12,23 +13,19 @@ import { ValueModel } from './models/ValueModel';
 function App() {
   const [error, setError] = useState<any>();
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [data, setData] = useState<JokeModel>();
+  const [data, setData] = useState<ValueModel[]>([]);
   const [favorites, setFavorites] = useState<ValueModel[]>([]);
 
   useEffect(() => {
-    fetchData();
+    fetchData()
   }, [])
-
-  useEffect(() => {
-    renderFavorites();
-  }, [favorites])
 
   const fetchData = async () => {
     fetch('http://api.icndb.com/jokes/random/10/')
     .then(res => res.json())
     .then(
-      (result) => {
-        setData(result);
+      (result: JokeModel) => {
+        setData(result.value);
         setIsLoaded(true);
       },
       (error) => {
@@ -51,32 +48,44 @@ function App() {
     setFavorites(newFavorites);
   }
 
-  const renderFavorites = () => {
-    // renderfavorites
-  }
-
   if (error) {
     return <div>Error: {error.message}</div>
   } else if (!isLoaded) {
     return <div>Loading...</div>
   } else {
     return (
-      <Container>
-        <Grid container direction="row" justify="center" alignItems="center" spacing={2}>
-          {
-            data?.value.map((item, index) => (
-              <Grid item xs={6}>
-                <Joke
-                  key={index}
-                  joke={item}
-                  onFavorite={onFavorite}
-                  onUnFavorite={onUnFavorite}
-                />
-              </Grid>
-            ))
-          }
-        </Grid>
-      </Container>
+    <Container>
+      <h1>Jokes😭</h1>
+
+      <Grid container direction="row" justify="center" spacing={2}>
+        {
+          data?.map((item, index) => (
+            <Grid item xs={6} key={index}>
+              <Joke
+                joke={item}
+                onFavorite={onFavorite}
+                onUnFavorite={onUnFavorite}
+              />
+            </Grid>
+          ))
+        }
+      </Grid>
+
+      <h1>Favorites💗</h1>
+
+      <Grid container direction="row" justify="center" spacing={2}>
+        {
+          favorites?.map((item, index) => (
+            <Grid item xs={6} key={index}>
+              <Favorite
+                key={`favorite-${index}`}
+                joke={item}
+              />
+            </Grid>
+          ))
+        }
+      </Grid>
+    </Container>
     )
   }
 }
