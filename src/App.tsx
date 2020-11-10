@@ -7,15 +7,21 @@ import Joke from './components/Joke';
 
 // models
 import { JokeModel } from './models/JokeModel';
+import { ValueModel } from './models/ValueModel';
 
 function App() {
   const [error, setError] = useState<any>();
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [data, setData] = useState<JokeModel>();
+  const [favorites, setFavorites] = useState<ValueModel[]>([]);
 
   useEffect(() => {
-    fetchData()
+    fetchData();
   }, [])
+
+  useEffect(() => {
+    renderFavorites();
+  }, [favorites])
 
   const fetchData = async () => {
     fetch('http://api.icndb.com/jokes/random/10/')
@@ -32,6 +38,23 @@ function App() {
     )
   }
 
+  const onFavorite = (joke: ValueModel) => {
+    const newFavorites = [...favorites];
+    newFavorites.push(joke);
+    setFavorites(newFavorites);
+  }
+
+  const onUnFavorite = (joke: ValueModel) => {
+    const newFavorites = [...favorites];
+    const index = newFavorites.indexOf(joke);
+    newFavorites.splice(index, 1);
+    setFavorites(newFavorites);
+  }
+
+  const renderFavorites = () => {
+    // renderfavorites
+  }
+
   if (error) {
     return <div>Error: {error.message}</div>
   } else if (!isLoaded) {
@@ -45,7 +68,9 @@ function App() {
               <Grid item xs={6}>
                 <Joke
                   key={index}
-                  joke={item.joke}
+                  joke={item}
+                  onFavorite={onFavorite}
+                  onUnFavorite={onUnFavorite}
                 />
               </Grid>
             ))
