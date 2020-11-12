@@ -22,6 +22,7 @@ const Jokes = ({ joke, onFavorite, onUnFavorite }: Props) => {
   const [checked, setChecked] = useState<boolean>(false);
 
   useEffect(() => {
+    console.log(checked)
     if (checked) {
       onFavorite(joke)
     } else {

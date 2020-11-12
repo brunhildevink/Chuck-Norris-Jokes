@@ -17,8 +17,16 @@ function App() {
   const [favorites, setFavorites] = useState<ValueModel[]>([]);
 
   useEffect(() => {
-    fetchData()
+    fetchLocalData();
+    fetchData();
   }, [])
+
+  const fetchLocalData = () => {
+    const localFavorites = localStorage.getItem('jokes');
+    if (localFavorites !== null) {
+      setFavorites(JSON.parse(localFavorites));
+    }
+  }
 
   const fetchData = async () => {
     fetch('http://api.icndb.com/jokes/random/10/')
@@ -38,14 +46,14 @@ function App() {
   const onFavorite = (joke: ValueModel) => {
     const newFavorites = [...favorites];
     newFavorites.push(joke);
-    setFavorites(newFavorites);
+    localStorage.setItem('jokes', JSON.stringify(newFavorites));
+    fetchLocalData();
   }
 
   const onUnFavorite = (joke: ValueModel) => {
     const newFavorites = [...favorites];
     const index = newFavorites.indexOf(joke);
     newFavorites.splice(index, 1);
-    setFavorites(newFavorites);
   }
 
   if (error) {
@@ -80,6 +88,7 @@ function App() {
               <Favorite
                 key={`favorite-${index}`}
                 joke={item}
+                onUnFavorite={onUnFavorite}
               />
             </Grid>
           ))
