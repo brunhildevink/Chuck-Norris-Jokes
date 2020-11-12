@@ -16,6 +16,8 @@ function App() {
   const [data, setData] = useState<ValueModel[]>([]);
   const [favorites, setFavorites] = useState<ValueModel[]>([]);
 
+  let url = 'http://api.icndb.com/jokes/random/10/'
+
   useEffect(() => {
     fetchLocalData();
     fetchData();
@@ -29,7 +31,7 @@ function App() {
   }
 
   const fetchData = async () => {
-    fetch('http://api.icndb.com/jokes/random/10/')
+    fetch(url)
     .then(res => res.json())
     .then(
       (result: JokeModel) => {
@@ -41,6 +43,33 @@ function App() {
         setError(error);
       }
     )
+  }
+
+  const setTimer = () => {
+    setData([]);
+    let count = 0;
+    url = 'http://api.icndb.com/jokes/random/1/';
+    const newData: any = [];
+
+    setInterval(async () => {
+      if (count < 10) {
+        fetch('http://api.icndb.com/jokes/random/1/')
+        .then(res => res.json())
+        .then(
+          (result: JokeModel) => {
+            setData(result.value);
+            count += 1;
+            setIsLoaded(true);
+          },
+          (error) => {
+            setIsLoaded(true);
+            setError(error);
+          }
+        )
+      }
+    }, 5000);
+
+      console.log(newData)
   }
 
   const onFavorite = (joke: ValueModel) => {
@@ -63,12 +92,12 @@ function App() {
   } else {
     return (
     <Container>
-      <h1>Jokes😭</h1>
+      <h1>Jokes 😂</h1>
 
       <Grid container direction="row" justify="center" spacing={2}>
         {
           data?.map((item, index) => (
-            <Grid item xs={6} key={index}>
+            <Grid item xs={12} lg={6} key={index}>
               <Joke
                 joke={item}
                 onFavorite={onFavorite}
@@ -79,6 +108,7 @@ function App() {
         }
         <Grid item>
           <button onClick={fetchData}>Load more jokes</button>
+          <button onClick={setTimer}>Set timer for 10 jokes</button>
         </Grid>
       </Grid>
 
@@ -87,9 +117,8 @@ function App() {
       <Grid container direction="row" justify="center" spacing={2}>
         {
           favorites?.map((item, index) => (
-            <Grid item xs={6} key={index}>
+            <Grid item xs={12} lg={6} key={index}>
               <Favorite
-                key={`favorite-${index}`}
                 joke={item}
                 onUnFavorite={onUnFavorite}
               />
