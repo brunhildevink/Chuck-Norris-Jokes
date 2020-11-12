@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container'
+import styled, { createGlobalStyle } from 'styled-components'
 
 // components
 import Joke from './components/Joke';
@@ -40,7 +41,6 @@ function App() {
     if (!newJoke) return;
     setData([...data, newJoke]);
   }, [newJoke])
-  
 
   const fetchLocalData = () => {
     const localFavorites = localStorage.getItem('jokes');
@@ -69,7 +69,7 @@ function App() {
 
     const intervalId = setInterval(() => {
       const joke = newData.pop();
-      if (joke !== undefined) {
+      if (joke) {
         setNewJoke(joke);
       } else {
         clearInterval(intervalId);
@@ -79,6 +79,7 @@ function App() {
 
   const onFavorite = (joke: ValueModel) => {
     const newFavorites = [...favorites];
+    setData(data.filter(item => item !== joke));
     newFavorites.push(joke);
     localStorage.setItem('jokes', JSON.stringify(newFavorites));
     fetchLocalData();
@@ -86,8 +87,14 @@ function App() {
 
   const onUnFavorite = (joke: ValueModel) => {
     const newFavorites = [...favorites];
-    const index = newFavorites.indexOf(joke);
-    newFavorites.splice(index, 1);
+    const found = newFavorites.find(item => item.id === joke.id);
+
+    if (found) {
+      const index = newFavorites.indexOf(found);
+      newFavorites.splice(index, 1);
+      localStorage.setItem('jokes', JSON.stringify(newFavorites));
+      fetchLocalData();
+    }
   }
 
   if (error) {
@@ -97,9 +104,10 @@ function App() {
   } else {
     return (
     <Container>
+      <GlobalStyle />
       <h1>Jokes 😂</h1>
 
-      <Grid container direction="row" justify="center" spacing={2}>
+      <Grid container direction="row" spacing={4}>
         {
           data?.map((item, index) => (
             <Grid item xs={12} lg={6} key={index}>
@@ -111,15 +119,19 @@ function App() {
             </Grid>
           ))
         }
-        <Grid item>
-          <button onClick={fetchData}>Load more jokes</button>
-          <button onClick={() => setIsInterval(true)}>Set timer for 10 jokes</button>
+      </Grid>
+
+      <Grid container direction="row" spacing={6}>
+        <Grid item lg={3} xs={12}>
+          <Button onClick={fetchData}>Load more jokes</Button>
         </Grid>
+        <Grid item lg={3} xs={12}>
+          <ButtonSecondary onClick={() => setIsInterval(true)}>Set timer for 10 jokes</ButtonSecondary>        </Grid>
       </Grid>
 
       <h1>Favorites💗</h1>
 
-      <Grid container direction="row" justify="center" spacing={2}>
+      <Grid container direction="row" spacing={4}>
         {
           favorites?.map((item, index) => (
             <Grid item xs={12} lg={6} key={index}>
@@ -137,3 +149,33 @@ function App() {
 }
 
 export default App;
+
+const GlobalStyle = createGlobalStyle`
+  body {
+    background: #f5f9ff;
+  }
+`;
+
+const Button = styled.button`
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  background: lightblue;
+  color: white;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 20px 30px;
+  width: 100%;
+`;
+
+const ButtonSecondary = styled.button`
+  border-radius: 4px;
+  cursor: pointer;
+  border: 2px solid lightblue;
+  color: lightblue;
+  background: none;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 20px 30px;
+  width: 100%;
+`;

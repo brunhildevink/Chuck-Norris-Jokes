@@ -7,16 +7,6 @@ type Props = {
   onUnFavorite: (joke: ValueModel) => void;
 }
 
-const ListItem = styled.li`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #fceef5;
-  padding: 20px;
-  list-style-type: none;
-  border-radius: 14px;
-`;
-
 const Favorite = ({ joke, onUnFavorite }: Props) => {
   return (
     <ListItem>
@@ -36,6 +26,20 @@ const Favorite = ({ joke, onUnFavorite }: Props) => {
 }
 
 export default Favorite;
+
+const ListItem = styled.li`
+  display: flex;
+  justify-content: space-between;
+  min-height: 120px;
+  align-items: center;
+  background: white;
+  padding: 20px;
+  list-style-type: none;
+  border-radius: 14px;
+  -webkit-box-shadow: 0px 2px 6px 0px rgba(50, 50, 50, 0.1);
+  -moz-box-shadow: 0px 2px 6px 0px rgba(50, 50, 50, 0.1);
+  box-shadow: 0px 2px 6px 0px rgba(50, 50, 50, 0.1);
+`;
 
 const Label = styled.label`
   margin-right: 10px;
