@@ -77,6 +77,9 @@ function App() {
             </Grid>
           ))
         }
+        <Grid item>
+          <button onClick={fetchData}>Load more jokes</button>
+        </Grid>
       </Grid>
 
       <h1>Favorites💗</h1>
