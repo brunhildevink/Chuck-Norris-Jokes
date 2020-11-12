@@ -13,15 +13,34 @@ import { ValueModel } from './models/ValueModel';
 function App() {
   const [error, setError] = useState<any>();
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const [isInterval, setIsInterval] = useState<boolean>(false);
   const [data, setData] = useState<ValueModel[]>([]);
+  const [allData, setAllData] = useState<ValueModel[]>();
+  const [newJoke, setNewJoke] = useState<ValueModel>();
   const [favorites, setFavorites] = useState<ValueModel[]>([]);
 
-  let url = 'http://api.icndb.com/jokes/random/10/'
+  let url = 'http://api.icndb.com/jokes/random/10/';
 
   useEffect(() => {
     fetchLocalData();
     fetchData();
   }, [])
+
+  useEffect(() => {
+    if (!allData) return;
+    if (isInterval) {
+      setData([]);
+      setTimer(allData);
+    } else {
+      setData(allData);
+    }
+  }, [isInterval, allData])
+
+  useEffect(() => {
+    if (!newJoke) return;
+    setData([...data, newJoke]);
+  }, [newJoke])
+  
 
   const fetchLocalData = () => {
     const localFavorites = localStorage.getItem('jokes');
@@ -35,8 +54,8 @@ function App() {
     .then(res => res.json())
     .then(
       (result: JokeModel) => {
-        setData(result.value);
         setIsLoaded(true);
+        setAllData(result.value);
       },
       (error) => {
         setIsLoaded(true);
@@ -45,31 +64,17 @@ function App() {
     )
   }
 
-  const setTimer = () => {
-    setData([]);
-    let count = 0;
-    url = 'http://api.icndb.com/jokes/random/1/';
-    const newData: any = [];
+  const setTimer = (allData: ValueModel[]) => {
+    const newData = [...allData];
 
-    setInterval(async () => {
-      if (count < 10) {
-        fetch('http://api.icndb.com/jokes/random/1/')
-        .then(res => res.json())
-        .then(
-          (result: JokeModel) => {
-            setData(result.value);
-            count += 1;
-            setIsLoaded(true);
-          },
-          (error) => {
-            setIsLoaded(true);
-            setError(error);
-          }
-        )
+    const intervalId = setInterval(() => {
+      const joke = newData.pop();
+      if (joke !== undefined) {
+        setNewJoke(joke);
+      } else {
+        clearInterval(intervalId);
       }
     }, 5000);
-
-      console.log(newData)
   }
 
   const onFavorite = (joke: ValueModel) => {
@@ -108,7 +113,7 @@ function App() {
         }
         <Grid item>
           <button onClick={fetchData}>Load more jokes</button>
-          <button onClick={setTimer}>Set timer for 10 jokes</button>
+          <button onClick={() => setIsInterval(true)}>Set timer for 10 jokes</button>
         </Grid>
       </Grid>
 
