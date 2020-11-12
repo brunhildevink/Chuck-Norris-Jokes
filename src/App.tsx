@@ -78,6 +78,7 @@ function App() {
   }
 
   const onFavorite = (joke: ValueModel) => {
+    if (favorites.length === 10) return;
     const newFavorites = [...favorites];
     setData(data.filter(item => item !== joke));
     newFavorites.push(joke);
