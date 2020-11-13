@@ -48,7 +48,7 @@ function App() {
   };
 
   const fetchData = async () => {
-    fetch("http://api.icndb.com/jokes/random/10/")
+    fetch("https://api.icndb.com/jokes/random/10/")
       .then((res) => res.json())
       .then(
         (result: JokeModel) => {
