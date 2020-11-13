@@ -1,4 +1,5 @@
-## View application here: https://brunhildevink.github.io/Chuck-Norris-Jokes/
+## View working demo here: https://brunhildevink.github.io/Chuck-Norris-Jokes/
+--
 
 # Getting Started with Create React App
 
